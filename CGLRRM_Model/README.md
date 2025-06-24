@@ -4,6 +4,7 @@ It is suggested to compile the code in Windows following the instruction
 It is suggested to compile the CGLRRM Fortran code in Windows and generate the .exe file.
 
 Software installation:
+
 (1)	MS-Visual Studio 
 (it is necessary to install the Desktop development with C++ component from Visual Studio.)
 
