@@ -1,0 +1,1300 @@
+This is the error/warning message database for the Coordinated Great 
+Lakes Regulation and Routing Model (CGLRRM).  The program uses the 
+following text  blocks to convey a message to the user.  For best 
+results on the screen, try to keep the lines down to 79 characters or 
+less.
+
+#1000
+
+Tried to open a file (for write) and was denied.  There may be a 
+permission problem with writing to the present working directory or the 
+specific filename.  Another process may already have the file open.  The 
+filename, IOSTAT value (which has meaning only to the FORTRAN compiler 
+used to create this version of the CGLRRM executable), and the build 
+information are as follows:
+
+#1001
+
+Could not find the master input file in the present working directory. 
+It contains the names of parameter files to open and read.
+  
+#1002
+
+The master input file exists, but could not be opened.  Another process 
+(e.g., an editor) may already have it opened for write access.  The 
+filename, IOSTAT value (which has meaning only to the FORTRAN compiler 
+used to create this version of the CGLRRM executable), and the build 
+information are as follows:
+
+#1003
+
+Experienced a read error.  The filename and resulting IOSTAT value 
+(which has meaning only to the FORTRAN compiler used to create this 
+version of the CGLRRM executable), and the build information are as 
+follows:
+
+#1004
+
+A problem was found in the master input file.  This file should contain 
+only comments and parameter file names.  The program tried to find a 
+file with the name below and failed.  Check the spelling and path from 
+the present working directory. 
+
+#1005
+
+The parameter file exists, but could not be opened.  Another process 
+(e.g., an editor) may already have it open for write access.  The 
+filename, IOSTAT value (which has meaning only to the FORTRAN compiler 
+used to create this version of the CGLRRM executable), and the build 
+information are as follows:
+
+#1006
+
+A parameter file appears to contain more than 32766 lines.  This file 
+may be corrupt. The file in question is named:
+
+#1007
+
+Could not find a ':' in one of the lines of a parameter file.  A colon 
+is used to separate the parameter ID code from the comma-delimited list 
+of data for that parameter.  The line in question reads:
+
+#1008
+
+Found an ':' inappropriately located in one of the lines of a parameter 
+file.  A colon is used to separate the parameter ID code from the comma-
+delimited list of data for that parameter.  In this case, the parameter 
+ID is shorter than six characters (the shortest one defined).  The line 
+in question reads:
+
+#1009
+
+Didn't find anything after the ':' on a parameter line.  A colon is used 
+to separate the parameter ID code from the comma-delimited list of data 
+for that parameter.  In this case, there was no data on the line.  The 
+line in question reads:
+
+#1010
+
+Did not recognize a parameter ID code.  It must be one of those 
+described in the documentation.  Check the spelling. The line in 
+question reads:
+
+#1011
+
+Found a match error in the list of parameters.  Since some parameter 
+codes are concatenated into strings, the end of one code may be combined 
+with the beginning of another code, creating a valid match.  Change or 
+re-arrange the codes, and re-compile.  The line in question reads:
+
+#1012
+
+The parameter matched one in the list, but there was no corresponding 
+label in the list for the computed GOTO.  Check any relevant changes 
+made to the source code. The parameter ID code, its index number, and 
+the parameter line it was
+read from are as follows:
+
+#1013
+
+Could not find the message database file specified by parameter 
+MESSAGEDATABASE.  The filename used and the parameter line it was read 
+from are as follows:
+
+#1014
+
+Invalid value specified for a VERBOSITY parameter. The character 
+after the ':' must be an integer between '1' and '9'.
+
+#1015
+
+Unable to open a temporary file in the output directory specified by the 
+parameter OUTPUTDIRECTORY.  The directory may not exist, there may be a 
+permission problem, or the path from the present working directory may 
+be incorrect.  The filename, IOSTAT value (which has meaning only to the 
+FORTRAN compiler used to create this version of the CGLRRM executable), 
+the build information, and the line containing the OUTPUTDIRECTORY 
+parameter are as follows:
+
+#1016
+
+Was able to open a temporary file in the output directory specified by 
+the parameter OUTPUTDIRECTORY, but could not write to it.  There may be a 
+permission problem, or the file may be in use by another process.  The 
+filename, IOSTAT value (which has meaning only to the FORTRAN compiler 
+used to create this version of the CGLRRM executable), the build 
+information, and the line containing the OUTPUTDIRECTORY parameter are as 
+follows:
+
+#1017
+
+Was able to open a temporary file in the output directory specified by 
+the parameter OUTPUTDIRECTORY, and write to it, but couldn't delete it 
+afterwards.  There may be a permission problem, or the file may be in 
+use by another process.  Be aware that some file systems (such as that 
+used on Novell Netware servers) have separate permissions for write and 
+delete.  The filename, IOSTAT value (which has meaning only to the 
+FORTRAN compiler used to create this version of the CGLRRM executable), 
+the build information, and the line containing the OUTPUTDIRECTORY 
+parameter are as follows:
+
+#1018
+
+Filename extensions cannot exceed six characters (including the optional 
+leading '.').  
+
+#1019
+
+Did not recognize the directory separator used as the final character in 
+the string specified for the parameter OUTPUTDIRECTORY.  The program 
+successfully opened and wrote to a file, but the directory used may not 
+be correct. Check file time and data stamps in the output directory to 
+ensure that they are not from previous runs.  If they are old, check in 
+the present working directory (or the directories within the path 
+specified in OUTPUTDIRECTORY) for misnamed files.  
+
+If the last character in OUTPUTDIRECTORY intentionally isn't a directory 
+separator, then an invalid filespec may be created, and future runs may 
+result in errors.
+
+Otherwise, the model has been compiled on some operating system (or with 
+a file system) with directory separators unknown to the program.  Update 
+the DIRSEP array in BLOKDATA.FOR.  In this case, please also contact the 
+authors, so that they can update the distribution code.
+
+#1020
+
+Could not interpret year given for parameter "Start Date".  The first 
+characters after the ':' must be 1-6 digit integers with digits between 
+'0' and '9'.  The IOSTAT value (which has meaning only to the FORTRAN 
+compiler used to create this version of the CGLRRM executable), the 
+build information, and the line in question, are as follows:
+
+#1021
+
+The specified year is out of range.  Must be integer value between 1 and 
+99999.  The value read and the input line are as follows:
+
+#1022
+Warning.  Found no data in the 'month' field of the "Start Date" record.  
+January 1 was assumed as the starting month and day.
+
+#1023
+
+Could not interpret month given for parameter "Start Date".  The first 
+characters after the first ',' must be 1-2 digit integers between '1' 
+and '12'.  The IOSTAT (which has meaning only to the FORTRAN compiler 
+used to create this version of the CGLRRM executable), the build 
+information, and the line in question, are as follows:
+
+#1024
+
+The specified month value is out of range.  Must be an integer between 
+'1' and '12'.  The value read and the input line are as follows:
+
+#1025
+Warning.  Found no data in the 'day' field of the "Start Date" record.  
+The first was assumed as the starting day.
+
+#1026
+
+The specified day is out of range.  Must be an integer of at least 1 and 
+less than or equal to the length of the month.  The value read and the 
+input line are as follows:
+
+#1027
+
+No starting year was given in "Start Date" parameter.  This is required 
+information.  The input line is as follows:
+
+#1028
+
+No ending year was given in "End Date" parameter.  This is required 
+information.  The input line is as follows:
+
+#1029
+
+Could not interpret year given for date parameter.  The first characters 
+after the ':' must be 1-6 digit integers with digits between '0' and
+'9'.  The IOSTAT value (which has meaning only to the FORTRAN compiler 
+used to create this version of the CGLRRM executable), the build 
+information, and the line in question, are as follows:
+
+#1030
+Warning.  Found no data in the 'month' field of the "End Date" record.  
+December 31 was assumed as the ending month and day.  
+
+#1031
+Warning.  Found no data in the 'day' field of the "End Date" record.  The 
+final day of the month was assumed to be the ending day.
+
+#1032
+ . . . assuming starting month and day of January 1
+
+#1033
+ . . . assuming starting day of 1st day of month
+
+#1034
+ . . . assuming ending month and day of December 31
+
+#1035
+ . . . assuming ending day as last day of month
+
+#1036
+
+Could not interpret month given for date parameter.  The first 
+characters after the first ',' must be 1-2 digit integers between '1' 
+and '12'.  The IOSTAT (which has meaning only to the FORTRAN compiler 
+used to create this version of the CGLRRM executable), the build 
+information, and the line in question, are as follows:
+
+#1037
+
+Could not interpret day given for parameter "Start Date".  The first 
+characters after the first ',' must be 1-2 digit integers between '1' 
+and the number of days in the month.  The IOSTAT (which has meaning only 
+to the FORTRAN compiler used to create this version of the CGLRRM 
+executable), the build information, and the line in question:
+
+#1038
+
+Could not interpret day given for date parameter.  The first characters 
+after the first ',' must be 1-2 digit integers between '1' and the 
+number of days in the month.  The IOSTAT (which has meaning only to the 
+FORTRAN compiler used to create this version of the CGLRRM executable), 
+the build information, and the line in question, are as follows:
+
+#1039
+
+An Area-Elev record specifies no area (blank first field).  This is 
+required information.  The input line is as follows:
+
+#1040
+
+Unable to read a float from the following string because it is longer 
+than 32 characters long.  The input line is as follows:
+
+#1041
+
+Failed to recognize the units (if any) specified for a parameter value.  
+Please consult the documentation for a comprehensive list of allowable 
+units.  The field in question and the input line are as follows:
+
+#1042
+
+Recognized the units specified for a parameter value, but did not find a 
+number in front of the unit label.  The field in question and input line 
+are as follows:
+
+#1043
+
+Could not read a parameter value in as a REAL number.  Check the entry 
+(may have O's instead of 0's, etc.).  Some compilers have specific 
+requirements (e.g., M$ FORTRAN 5.0 compilers do not accept exponential 
+formats without an exponent (e.g., 1.234E), SparcStation compilers 
+assume zero (i.e, 1.234E0).  The IOSTAT (which has meaning only to the 
+FORTRAN compiler used to create this version of the CGLRRM executable), 
+the build information, and the line in question, are as follows:
+
+#1044
+
+Inappropriate input units used, resulting in an unrecognized or illegal 
+unit conversion (e.g., a lake level specifying "176.54 m3s" in lieu of 
+"176.54 m)".  Program terminated. Note that all computations are 
+performed in metric units.  English units may be specified, but are 
+immediately converted to metric.  Metric-to-metric conversions are also 
+performed (e.g., square kilometers to square meters).  The units 
+specified, the units the program intends to work with, and the input 
+field, are as follows:
+
+#1045
+
+Too many surface area/elevation data pairs specified.  The default 
+maximum is five points to define the curve.  If more points are desired, 
+change the second dimension on array AVSZ, adjust the limit in function 
+READAVSZ, and re-compile.
+
+#1046
+
+Encountered ambiguity reading a parameter value.  The last five 
+characters matched the tens of cubic meters per second label ("10m3s"), 
+but there is no separation between the number and units (e.g., 210m3s 
+can be interpreted as either 20 or 210 m3s.  The line in question is as 
+follows:
+
+#1047
+
+Encountered inconsistency with area-elevation data.  Read the first 
+point of a valid data pair, but a constant area had already been 
+specified.  The line in question is as follows:
+
+#1048
+
+Encountered inconsistency with area-elevation data.  Read a constant 
+area, but a first area/elevation point had already been read.  The line 
+in question is as follows:
+
+#1049
+
+Encountered mistake in area-elevation data.  For two of the points, area 
+is decreasing with elevation.  The data in question are as follows:
+
+#1050
+
+Encountered mistake in area-elevation data.  Two of the points have the 
+same elevation.  Points must be at least a millimeter apart in 
+elevation.  The data in question are as follows:
+
+#1051
+
+Tried to interpolate/extrapolate a value from two points, but the X 
+values for each point were practically identical.  This would result in 
+a division by zero error.  The X values data in question are as follows:
+
+#1052
+
+Warning.  Extrapolated based on the closest pair of data points.  It is 
+recommended that the curve be extended. The extrapolated value and data 
+points used are as follows:
+
+#1053
+
+Discharge equation record specifies no 'K' value (blank first field).  
+This is required information, corresponding to the outflow equation 
+coefficient, in the general discharge equation:   
+
+Q= K *  (WT*ZU + (1.-WT)*ZD - YM)**A  *  (ZU-ZD+ZC)**B
+
+The input line is as follows:
+
+#1054
+
+Discharge equation record specifies no 'YM' value (blank second field).  
+This is required information, corresponding to the outlet bottom 
+elevation constant, in the general discharge equation:   
+
+Q= K *  (WT*ZU + (1.-WT)*ZD - YM)**A  *  (ZU-ZD+ZC)**B
+
+The input line is as follows:
+
+#1055
+
+Discharge equation record specifies no 'A' value (blank third field).  
+This is required information, corresponding to the exponent for the 
+"depth" term, in the general discharge equation:   
+
+Q= K *  (WT*ZU + (1.-WT)*ZD - YM)**A  *  (ZU-ZD+ZC)**B
+
+The input line is as follows:
+
+#1056
+
+Discharge equation record specifies no 'B' value (blank fourth field).  
+This is required information, corresponding to the exponent for the 
+"fall" term, in the general discharge equation:   
+
+Q= K *  (WT*ZU + (1.-WT)*ZD - YM)**A  *  (ZU-ZD+ZC)**B
+
+The input line is as follows:
+
+#1057
+
+Discharge equation record specifies no 'WT' value (blank fifth field).  
+This is required information, corresponding to the weighting factor for 
+the upstream lake, in the general discharge equation:   
+
+Q= K *  (WT*ZU + (1.-WT)*ZD - YM)**A  *  (ZU-ZD+ZC)**B
+
+The input line is as follows:
+
+#1058
+
+Discharge equation record specifies no 'ZC' value (blank sixth field).  
+This is required information, corresponding to the fall adjustment 
+constant, in the general discharge equation:   
+
+Q= K *  (WT*ZU + (1.-WT)*ZD - YM)**A  *  (ZU-ZD+ZC)**B
+
+The input line is as follows:
+
+#1059
+
+Parameter record neglected to specify a value (blank first field).  
+Please edit the record.  The input line is as follows:
+
+#1060
+
+An MIDLAKEINC, SUPERIORINC, ONTARIOINC, or P77AMIDLAKEINC record 
+specifies an invalid value.  The number of increments must be between 1 
+and 999.  The value read and the input line are as follows:
+
+#1061
+
+Encountered read error.   The IOSTAT value which has meaning only to the 
+FORTRAN compiler used to create this version of the CGLRRM executable), 
+the build information, and the line in question, are as follows:
+
+#1062
+
+Lake Superior level fell too low to use the gate equations.  It is 
+likely that the level has been outside the range of validity for some 
+time, and the discharge values should be viewed with skepticism.  Check 
+model input.  The level is as follows:
+
+#1063
+
+Failed to specify a necessary starting elevation.
+
+#1064
+
+Could not find the data file specified.  The filename used and the 
+parameter line it was read from are as follows:
+
+#1065
+
+Tried to compute a discharge equation using water levels outside the 
+range for which it is valid.  Downstream water level is higher than 
+upstream water level (plus ZC), or the upstream water level is lower 
+than the channel invert (second value on the parameter input line 
+describing the equation). 
+
+This may happen when routing through the middle lakes with really large 
+and abrupt changes in the supply or retardation values, because the 
+level of Lake St. Clair will fluctuate too much.  Check input data, then 
+increase the number of increments per period. The levels in question are 
+as follows: 
+
+#1066
+
+Parameter ID code is longer than 16 alphanumeric characters.  Check your 
+parameter line against the recognized codes in the documentation.  The 
+line in question is as follows:
+
+#1067
+
+Found a ':', but no parameter ID code before it.  Check input file.  The 
+line in question is as follows:
+
+#1068
+
+Tried to open a file (for write) and was denied.  The file should hold 
+summarized input data.  There may be a permission problem with writing 
+to the present working directory or the specific filename, or another 
+process may already have the file open (e.g., another instance of the 
+model currently running).  The filename, IOSTAT value (which has meaning 
+only to the FORTRAN compiler used to create this version of the CGLRRM 
+executable), and the build information are as follows:
+
+#1069
+
+Found keyword 'INTERVAL' in a time-series data file, but could not 
+determine the value after it.  The next letter after the keyword must be 
+'D', 'W', 'Q', or 'M' (daily, weekly, quarter-monthly, or monthly).  The 
+line in question is as follows:
+
+#1070
+
+First word begins with a 'U' or 'I', but it does not match either of the 
+keywords required in time-series data files (i.e., INTERVAL' or 
+'UNITS').  Check the entry. The line in question is as follows:
+
+#1071
+
+Found a line that appears to be a comment, but it did not start with a 
+'#'.
+Check the entry.  The line in question is as follows:
+
+#1072
+
+No units specified in time-series data file.  File must contain a line 
+such as:
+      Units: m3s
+
+#1073
+
+No data found in a time-series data file.  Program terminated.
+
+#1074
+
+No time interval specified in time-series data file.  File must contain 
+a line such as:
+      Interval: quarter-monthly
+
+#1075
+
+Found data, and read the units and interval from time-series data file, 
+but could not backspace it to the first data line.
+
+#1076
+
+Failed to parse a line of quarter-monthly input data according to the 
+standard format (I5,I2,12F8).  File may be in some other format, was 
+corrupted, or has missing lines.  Regardless of the starting quarter-
+month and ending quarter-month, all four lines for each year in the 
+simulation must be present.
+
+#1077
+
+Failed to parse a line of monthly input data according to the standard 
+format (I5,12F8).  Check the year value and look for corrupted data. The 
+IOSTAT value (which has meaning only to the FORTRAN compiler used to 
+create this version of the CGLRRM executable), the build information, 
+and the line in question, are as follows:
+
+#1078
+
+Failed to parse a line of monthly input data according to the standard 
+format (I5,12F8).  The year given on the line was not sequential from 
+that of the previous line.  File may be in different format, have 
+missing lines, or was corrupted.
+
+#1079
+
+Reached end of file (EOF) before all necessary data read.  Several 
+possible reasons: incorrect ending date, data must be appended to the 
+file, or the wrong file was specified.  Note:
+
+a) Implementation of when the EOF is encountered during file access 
+varies among computer systems (e.g., on Sparcstations, if the last line 
+of a data file lacks a linefeed, EOF is reached, even though the line 
+has valid data).  If no mistake is found, append a carriage-return (for 
+DOS compatibility) or add a blank line to the end of data files.  
+
+b) If a weekly routing interval is used, the end of the final period is 
+actually the end day of the week containing the ending date specified in 
+the run parameters.  The beginning of a week is taken as the day of the 
+starting date (e.g., a weekly run specified to start on Monday, 
+5Jan1998, and end on 31Mar1998, will actually require data through 
+Sunday, 5Apr1998.  Each period is Monday to Sunday, and the final period 
+is the one containing the ending date.  If data for Apr1998 was 
+unavailable, the ending date should be changed to Sunday, 30Mar1998).
+
+#1080
+Time-series input data file specified inappropriate units.  Must be m3s, 
+cfs, tcfs, or 10m3s.
+
+#1081
+
+Warning. Solving for level of Lakes Michigan-Huron without specifying 
+net basin supplies.  0's will be assumed.
+
+#1082
+
+Warning. Solving for level of Lake St. Clair without specifying net 
+basin supplies.  0's will be assumed.
+
+#1083
+
+Warning. Solving for level of Lake Erie without specifying net basin 
+supplies.  0's will be assumed.
+
+#1084
+
+Warning. Solving for level of Lakes Michigan-Huron without specifying 
+Chicago diversion data.  0's will be assumed.
+
+#1085
+
+Warning. Solving for level of Lake Erie without specifying Welland Canal 
+flow data.  0's will be assumed.
+
+#1086
+
+Error reading summary inflow file.
+
+#1087
+
+Error converting a line read from summary inflow file to floating point 
+numbers.
+
+#1088
+
+Routing interval specification record specifies an invalid value.  The 
+first character after the ':' must be a 'D', 'W', 'Q', or 'M' (daily, 
+weekly, quarter-monthly, or monthly routing through the middle lakes).  
+The value read and the input line are as follows:
+
+#1089
+
+Tried to open a file (for read) and was denied.  The file should hold 
+summarized input data.  There may be a permission problem writing to the 
+present working directory or the specific filename.  Another process may 
+already have the file open (e.g., another instance of the model 
+currently running).  The filename, IOSTAT value (which has meaning only 
+to the FORTRAN compiler used to create this version of the CGLRRM 
+executable), and the build information, are as follows:
+
+#1090
+
+The simultaneous solution of routing equations for a given increment 
+fell below an arbitrary accuracy threshold at least once.  The continuity
+test for a period is based on arithmetically summing the water balance 
+terms (outflow, inflow, diversions, net basin supply, average rate of 
+change in storage).  The message is triggered when this result exceeds 
+a threshold value, determined according to FlowRound.  If FlowRround is
+1, then continuity must be satisfied to within 10 m3s.  If FlowRround is
+0, then continuity must be satisfied to within 1 m3s.  This often results
+from rounding effects on lake levels.  Occasionally it occurs due to 
+failings in the mathematics.  In this case, it can usually be fixed by
+using more increments.  Consult file detailed.log to get more information
+regarding each occurrence.
+
+#1091
+
+Could not converge during iterative routing procedure.  The simultaneous 
+equations could not be solved to the tolerances specified within the 
+iterations allowed.  Review end of file detailed.log.  Increase number 
+of routing increments, increase the flow rounding tolerance (default 
+could be too low), or decrease the level rounding tolerance (e.g., 
+rounding to nearest cm may result in lake levels that are 1 cm apart, 
+but yield flows that are farther apart than the tolerance permits).
+
+#1092
+
+A MIDLAKESOLUTION record specifies an invalid value.  The first character
+after the ':' must be an 'I' for iterative procedure (as in Plan77A 
+documents), or 'M' for the matrix-based method (i.e., GLERL's MIDLAKES 
+model).  The value read and the input line in question are as follows:
+
+#1093
+
+If the run starts after the first of the month, the initial levels for 
+Lakes Superior, Michigan-Huron, St. Clair, and Erie can't be used by 
+Plan 1977A as beginning-of-month levels.  BOM levels must be specified
+with the parameters "Sup BOM Level", "MHU BOM Level", "St C BOM Level", 
+and "Eri BOM Level".
+
+#1094
+
+A PREVSTMRIVFLOW record specifies no initial Lake Superior outflow for 
+the previous month (blank first field).  The input line is as follows:
+
+#1095
+
+Specified an ending date earlier than the starting date.  The values 
+read are as follows:
+
+#1096
+
+Data file does not include data back to the starting date specified.  
+The filename and the date at which data begins are as follows:
+
+#1097
+
+Tried to open an output file (for write) and was denied.  There may be a 
+permission problem with writing to the output directory or the specific 
+filename.  Another process may already have the file open.  A name was 
+constructed from the specified (or default) output directory, a 7 or
+8 character root name assigned by the program, and from the specified 
+(or default) output file extension.  Check the validity of the resulting 
+filename on the filesystem and operating system in use (e.g., '&' can be 
+used with Win95 but not Windows NT).  The filename constructed, the 
+IOSTAT value (which has meaning only to the FORTRAN compiler used to 
+create this version of the CGLRRM executable), and the build 
+information, are as follows:
+
+#1098
+
+MonthLength record specifies an invalid value.  The first character 
+following the ':' must be either an 'A' for actual, or a 'U' for 
+uniform.
+
+#1099
+
+Specified a non-zero exponent for the downstream level in the Niagara 
+River flow equation, indicating use of a two-gage discharge 
+relationship, but also specified use of the "matrix" solution for 
+solving the simultaneous equations on the middle lakes.  The two-gage 
+equation in the matrix solution requires a starting level for the 
+Chippewa-Grass Island Pool.  Insert a parameter file line such as:
+
+CGIP Start Level: 171.16 m
+
+#1100
+
+Specified a non-zero exponent for the downstream level in the Niagara 
+River flow equation, indicating use of a two-gage discharge 
+relationship, but also need to specify a time-series of levels to use 
+for the Chippewa-Grass Island Pool.  These can be either read from a 
+file (specified with parameter CGIPAVELEVELDATA), or assigned from a 
+repeating sequence.  Insert a parameter file line such as:
+
+CGIP Ave Level Data: ../tsdata/niamlev.act
+
+#1101
+
+Warning.  Specified an exponent of zero for the downstream level in the 
+Niagara River flow equation, indicating use of a single-gage discharge 
+relationship, but also specified a starting level for the Chippewa-Grass 
+Island Pool (not required).  Check for redundant input parameters. 
+
+#1102
+
+Warning.  Specified an exponent of zero for the downstream level in the 
+Niagara River flow equation, indicating use of a single-gage discharge 
+relationship, but also specified a time-series data file for the 
+Chippewa-Grass Island Pool (not required).  Check for redundant input 
+parameters. 
+
+#1103
+
+Had difficulty locating first comma-delimited field in the first line of 
+a repeated time-series data set.  
+
+#1104
+
+Failed to recognize the units (if any) specified for some repeating 
+time-series data.  Please consult the documentation for a comprehensive 
+list of allowable units.  The parameter ID portion of the line in 
+question is unavailable, but the remainder is as follows:
+
+#1105
+
+No time interval specified on the first line of a repeating data set.  
+After specifying the units, a field starting with 'd', 'w', 'q', or 'm' 
+is required.    The parameter ID portion of the line in question is 
+unavailable, but the remainder is as follows:
+
+#1106
+
+Invalid time interval specified on the first line of a repeating data 
+set.  After specifying the units, a field starting with 'd', 'w', 'q', 
+or 'm' is required.  The parameter ID portion of the line in question is 
+unavailable, but the remainder is as follows:
+
+#1107
+
+Could not parse a comma-delimited field from the string listed below.  
+The third field (or first, if a continuation of the data from a prior 
+line) must show the number of values contained on the rest of a line for 
+repeating data.  The parameter ID portion of the line in question is 
+unavailable, but the remainder is as follows:
+
+#1108
+
+Tried to read an integer from the string listed above.  Field must show 
+the number of values contained on the remainder of a line for repeating 
+data.  Either could not be read as an integer, or value is < 1.  The 
+parameter ID portion of the line in question is unavailable, but the 
+remainder is as follows:
+
+#1109
+
+Specifying either too many or too few values for a repeating time-
+series.  The parameter ID portion of the line in question is 
+unavailable, but the remainder is as follows:
+
+#1110
+
+Tried to read a floating point from the string listed above.  Field must 
+contain one value from a repeating time-series sequence.  The parameter 
+ID portion of the line in question is unavailable, but the remainder is 
+as follows: 
+
+#1111
+
+Could not parse a comma-delimited field from the string listed below.  
+Field is part of a comma-delimited list of repeating time-series values.  
+The parameter ID portion of the line in question is unavailable, but the 
+remainder is as follows:
+
+#1112
+
+Specified a non-zero exponent for the downstream level in the Niagara 
+River flow equation, indicating use of a two-gage discharge 
+relationship, but also specified use of the "iterative" solution for 
+solving the simultaneous equations on the middle lakes.  The two-gage 
+equation in the iterative solution doesn't need a starting level for the 
+Chippewa-Grass Island Pool.  Comment this parameter out.
+
+#1113
+
+Warning.  Parameters indicate solving for at least one of the middle 
+lakes, but not all of them.  Must solve for all three.  If any of 'M', 
+'C', or 'E' appear in the "Lakes to solve for" parameter, they must all 
+be there.  Failed to specify solving for the following lakes:
+
+#1114
+
+Warning.  Specified a starting level for a lake, but didn't identify it 
+as one of the lakes to solve for.  Check input consistency. 
+
+#1115
+
+Warning.  Specified NBS data for a lake, but didn't identify it as one 
+of the lakes to solve for.  Check input consistency. 
+
+#1116
+
+Rounding-related record specifies an invalid value.  The value specified 
+determines the decimal place to round to, and must be between -6 and 3.  
+If a value of -99 is specified, no rounding is performed, and the full 
+64-bit floating-point representation is carried forward in the 
+computations.  The values read are as follows:
+
+#1117
+
+A STMRIVSOLUTION record specifies an invalid value.  This parameter 
+tells how to compute St. Marys River flows (Lake Superior outflows).  If 
+'1977A' appears after the ':', then the program uses Plan 1977A to 
+calculate Superior outflows.  If '1955' appears after the ':', then the 
+program uses the 1955 Modified Rule of 49 to calculate Superior 
+outflows.  If 'O' appears, an outflow equation is used (that must be 
+specified using the STMRIVEQN parameter; e.g., the pre-project 
+equation).  The value read and the input line are as follows:
+
+#1118
+
+Note: performing non-monthly Lake Superior routing using Plan 1977-A.  
+Please refer to assumptions in documentation for Superior modeling.
+#1119
+
+Superior increment record specifies no integer value (blank first 
+field).   Edit the record.  The input line is as follows:
+
+#1120
+
+Lake Superior listed as one of the lakes to solve for, but failed to 
+specify how to compute Lake Superior outflows.  Insert a STMRIVSOLUTION 
+record.
+
+#1121
+
+Warning.  Time step for middle lakes routing is extremely large.  
+Recommend reducing time step. 
+
+#1122
+
+Warning.  Solving for level of Lake Superior without specifying net 
+basin supplies.  Null values have been assumed.
+
+#1123
+
+Warning.  Solving for level of Lake Superior without specifying Long Lac 
+or Ogoki diversion data.  Null values have been assumed.
+
+#1124
+
+Tried to open a file for time-series output, but failed.  The "Only One 
+Open" flag is true, so this is unlikely to be a problem with too many 
+file sopen.  Another process (e.g, an editor) may already have it open, 
+or there is a permission problem.  The filename, IOSTAT value (which has 
+meaning only to the FORTRAN compiler used to create this version of the 
+CGLRRM executable), and the build information are as follows:
+
+#1125
+
+Tried to open a file for time-series output, but failed.  All output 
+files are open simultaneously, so likely exceeded operating system's 
+limit on open files.  Test by including a parameter line such as:
+
+	Only One Open: True
+
+Although "too many files open" is a common problem, this specific error 
+could also be due to something else.  Another process (e.g., an editor) 
+may already have it open, or there may be a permission problem.  The 
+filename, IOSTAT value (which has meaning only to the FORTRAN compiler 
+used to create this version of the CGLRRM executable), and the build 
+information, are as follows:
+
+#1126
+
+Tried to open a file for writing time-series output, but failed.  File 
+had been opened, written to, and closed successfully earlier in the run.  
+Another process (e.g., an editor) may already have it open, or a disk 
+error occurred.  The filename, IOSTAT value (which has meaning only to 
+the FORTRAN compiler used to create this version of the CGLRRM 
+executable), and the build information are as follows:
+
+#1127
+
+Encountered write error.   The IOSTAT value (which has meaning only to 
+the FORTRAN compiler used to create this version of the CGLRRM 
+executable), the build information, and the line that caused the 
+problem, are as follows:
+
+#1128
+
+Requested an output file for a lake not being solved for.  The lake and 
+data requested are given below.
+
+#1129
+
+Requested an improper output file.  The period length (monthly, weekly, 
+etc.) of the output file must be equal to or greater than the routing 
+period used for the lake.
+
+#1130
+
+Did not specify previous Lake Superior outflow, as required to use Plan 
+1977A.  This is required information for the plan.  Insert a line such 
+as:
+
+	Prev. St. M. Riv. Flow:  1560 m3s
+
+#1131
+
+Lake Ontario listed as one of the lakes to solve for, but failed to 
+specify how to compute Lake Ontario outflows.  Insert a USTLRIVSOLUTION 
+record.
+
+#1132
+
+Warning.  Solving for level of Lake Ontario without specifying net basin 
+supplies.  Null values will be assumed.
+
+#1133
+
+Warning.  Solving for level of Lake Ontario without specifying Welland 
+Canal flow data.  Null values will be assumed.
+
+#1134
+
+USTLRIVSOLUTION record specified an invalid value.  This parameter tells 
+how to compute Lake Ontario outflows.  If the characters after the ':' 
+are '1958D', then the program uses Plan 1958D to calculate outflows.  If 
+'1998', then Plan 1998 is used to calculate Ontario outflows.  If an 
+'O', an outflow equation is used (that must be specified using the 
+USTLRIVEQN parameter).  The value read and the input line are as 
+follows:
+
+#1135
+
+Warning.  P77AMONTHSTOAVG record failed to include a proper list of how 
+many months of forecasted outflows must be averaged to compute a Plan 
+1977A outflow.  The comma-delimited list should contain 12 positive 
+integers.  The first shows the number of months to average in order to 
+compute a January outflow, the second shows the number of months to 
+average a February outflow, etc.  This is optional information for using 
+Plan1977A; if not specified the program assumes 5 months to average, no 
+matter which month is being computed.  Program terminated.  Please check 
+syntax of input.  The incorrect input line is as follows:
+
+#1136
+
+A P77AMONTHSTOAVG record contains an improper value.  Only possible to 
+average between 1 and 12 months of Plan 1977A outflows to compute the 
+final Plan 1977A flow.  The incorrect input line is as follows:
+
+#1137
+
+Input record with comma-delimited list of integer input values does not 
+have enough values on the line.
+
+#1138
+
+Could not read field in a comma-delimited list as an integer (I6).
+
+#1139
+
+P77A MidLake Inc record specifies an invalid value.  The number of 
+increments must be between 1 and 999.  The value read and the input line 
+are as follows:
+
+#1140
+
+Could not read value after the colon as an integer (I9).
+
+#1141
+
+Computed value unrealistic.  There are two possible explanations.  A 
+lake is being drained or filled up well beyond physical possibility.  
+Check the input data (especially units).  
+
+Otherwise, the model is somehow using the missing data marker (-9999) as 
+valid input.  Though a bug is possible, this situation could happen if 
+some column of input data (with mixed valid and missing data) needed 
+conversion, either into a different routing interval, or different 
+units.  When specifying forced flows, always provide them in the base 
+units (m or m3s), and in the proper routing interval.
+
+#1142
+
+Tried to specify a time series of daily values as repeating data.  This 
+is not supported simply because the number of values is so cumbersome.
+Daily time-series values must be specified using an input data file.  
+The end of the line in question looks like:
+
+#1143
+
+Failed to parse a line of daily input data according to the standard 
+format (I5,I3,I2,8F8).  Simulation end date may be beyond data provided.  
+Check also for garbled data. The IOSTAT value (which has meaning only to 
+the FORTRAN compiler used to create this version of the CGLRRM 
+executable), the build information, and the line in question, are as 
+follows:
+
+#1144
+
+Failed to parse a line of daily input data according to the standard 
+format (I5,I3,I2,8F8).  The year, month, and quarter-month given on the 
+line were not sequential from that of the previous line.  Check that 
+file is in daily format, contains no missing lines, is not in a -
+different format, or was corrupted.
+
+#1145
+
+Water-balance or retardation time-series of input data contains only 
+missing values for a routing period.  This will yield spurious results.  
+Only 'special' columns of data may contain missing values.  Printed 
+below are the lake name, period ending date, and column number from the 
+lake's summary input file:
+
+#1146
+
+'Compatibility mode' for Plan 1977A is set to do a six-month regulation 
+run, but the end date is set beyond six months.  (There are only six 
+months of NBS in the operational supply matrix).
+
+#1147
+
+Only weekly routing through Lake Ontario is permitted if using Plan 
+1958D.  Separating the routing period from the regulation period is not 
+yet permitted for Lake Ontario.
+
+#1148
+
+'P77A Compat Mode' record specifies an invalid value.  The value must be 
+an integer (i.e., specifically -1, 0, or 1).  Read the documentation for 
+option details.  The value specified was:
+
+#1149
+
+Plan 1958D is implemented only for weekly regulation, with the week 
+beginning on a Friday.  You must specify the year, month, and date of a 
+Friday for the P58D Forecast Date.  The line was given as:
+
+#1150
+
+Could not find the Plan 1958D Simulation input file specified by 
+parameter P58DSIMULATEFILE.  The filename used and the parameter line it 
+was read from are as follows:
+
+#1151
+
+Specified a time series of weekly values as repeating data.  This 
+is not supported, because weeks are not repeatable on an annual basis.  
+Weekly time-series values must be specified using an input data file.  
+The end of the line in question looks like:
+
+#1152
+
+Failed to parse a line of daily input data according to the standard 
+format (I5,I3,I2,12F8).  The year, month, and quarter given on the line 
+were not sequential from that of the previous line, or contained 
+illegitmate values.  File may be in some other format, or has missing 
+lines, or was corrupted. 
+
+#1153
+
+Failed to parse a line of weekly input data according to the standard 
+format (I5,I3,I3,1F8).  The year, month, and date given on the line were 
+not sequential from that of the previous line, or contained illegitmate
+values.  File may be in some other format, or has missing lines, or was 
+corrupted. 
+
+#1154
+
+Failed to parse a line of weekly input data according to the standard 
+format (I5,I3,I3,1F8).  End of final routing period may be beyond data 
+provided.  Check also for garbled data. The IOSTAT value (which has 
+meaning only to the FORTRAN compiler used to create this version of the 
+CGLRRM executable), the build information, and the line in question, 
+are as follow:
+
+#1155
+
+Appears to be a discontinuity in the dates appear inside a weekly input 
+data file.  The dates expected and the date encountered are listed below:
+
+#1156
+
+Water-balance or retardation time-series of input data contains some 
+missing values for a routing period.  The CGLRRM doesn't estimate data.  
+Only 'special' columns of data may contain missing values.  Printed 
+below are the lake name, period ending date, and column number from the 
+lake's summary input file:
+
+#1157
+
+Failed to parse a line of quarter-monthly input data according to the 
+standard format (I5,I2,12F8).  The year and quarter given on the line 
+were not sequential from that of the previous line.  File may be in 
+different format, have missing lines, or was corrupted.
+
+#1158
+
+Inconsistent input detected regarding lake area data.  An area record for
+a lake not being routed was supplied.  Please review your input parameters
+and/or the detailed log for more information.  The number of points and
+lake in question are:
+
+#1159
+
+Failed top specify area data for a lake you are routing through.  Provide
+a record such as 
+        Sup. Area/Elev: 82521.429480 km2
+        MHu  Area-elev:  117470753820  m2 
+This is a only sample.  In your case, the missing area data is for
+#1160
+
+St. Marys Solution parameter indicates using an outflow equation to
+determine St. Marys River flows, but either the equation was not specified,
+or wasn't specified correctly.
+
+#1161
+
+Warning.  Calculating outflows for a lake without specifying any 
+retardation losses (i.e., for Lake Erie, generally would have at least one
+of "Nia Riv Ice Data", "Nia Riv Weed Data", or "Nia Riv Retr Data").  
+Null values have been assumed.  This warning pertains to:
+#1162
+Trying to route through the middle lakes, but didn't specify one of the
+outflow equations. 
+
+#1163
+
+Computing Lake Superior outflows using a Plan 1977A, but input contained 
+a "St M Riv Eqn" parameter, specifying a discharge equation for the St. 
+Marys River.  
+
+#1164
+
+Plan 1977A needs to know beginning-of-month levels.  Since this run starts 
+at the beginning of a month, it uses the initial lake levels for the run, 
+and you don't need to explicitly provide BOM levels for Plan 1977A (i.e., 
+"Sup BOM Level", "MHU BOM Level", etc.).  However, you specified a value 
+for at least one of them anyway, and it contradicts the initial lake level, 
+causing ambiguity and resulting in the sad demise of your run.
+
+#1165
+
+Tried to use an input parameter that is not fully implemented.  It has 
+been registered in the list of allowable parameters, but no code has yet
+been implemented to parse the value(s).  Please inform the model developers
+of your desire.
+
+#1166
+
+Missing information: don't have either the run's Start Date or End Date
+completely defined.  Check your input.
+
+#1167
+
+Error.  Your input indicates not solving for at least one of the middle  
+lakes.  You must be routing through Lake Superior and the middle lakes in 
+order to use Plan 1977A.  
+
+#1168
+
+Error.  You must specify a value for parameter SUPCRITERIAROUND.  
+
+#1169
+
+Error.  You must specify a value for parameter SUPSWPIERFORMULA.  
+
+#1170
+
+'SUPSWPIERFORMULA' record specifies an invalid value.  The value must be 
+an integer (specifically, 1 or 2).  Use 1 for the old, traditional formula,
+and 2 for the new EC formula derived in 2000.  The value specified was:
+
+#1171
+
+The model is coming up with unreasonable numbers for Lake Superior, 
+indicating a bust somewhere.  This particular failure was triggered by a
+level too high to stay under the maximum outflow constraints in Plan 1977A.
+The related values are listed below.  However, this is more likely a symptom
+than the cause.  Review the results thus far to see when the lake levels
+began climbing out of a reasonable range, and try to determine why.  Check
+units on input data, turn of the Sup Verbosity parameter, etc.
+
+#1172
+
+'SUPCRITERIAROUND' record specifies an invalid value.  The value must be 
+an integer (specifically, 1 or 2).  This parameter directs the program on to 
+round calculations regarding Criterions B and C, and also while determining
+total non-gated flow.  A value of 1 means to use the rounding practices 
+embedded in Plan 1977A.  A value of 2 means to use the system-wide settings
+established with the parameters 'LEVELROUND', etc).  The value specified was:
+
+#1173
+
+You tried to enter the same parameter for twice.  Only GENERALVERBOSITY, 
+MODELERNAME, the parameters specifying area-elevation pairs, and the 
+parameters regarding repeating time-series data are allowed multiple entries.  
+
+#1174
+
+You entered a parameter that the model accepts for input, but doesn't 
+currently use for anything.  This situation occurs because of a partial
+implementation of some anticipated feature, or because some change or
+disablement may not be permanent.  The run stops so that you can verify
+your input.  The parameter that caused the problem is shown below.
+		  
+#1175
+
+Error.  You must specify a value for parameter SUPPREPROJMETHOD.  
+
+#1176
+
+Error.  You must specify a value for parameter SUPCRITBMETHOD.  
+
+#1177
+
+'SUPPREPROJMETHOD' record specifies an invalid value.  The value must be 
+an integer (specifically, 1 or 2).  This parameter directs the program to 
+use the old way (get pre-project by popping the Plan 1977A forecasted level
+into the 1887 equation) if set to 1.  If SUPPREPROJMETHOD is set to 2, the 
+sub GetSupPreProject solves for the Criterion C flow iteratively, based on 
+the BOP level and water balance terms.  Either way, the trigger remains the 
+Plan 1977A forecasted level.  The value specified was:
+
+#1178
+
+'SUPCRITBMETHOD' record specifies an invalid value.  The value must be 
+an integer (specifically, 1 or 2).  This parameter directs the program to 
+use the old way (allow Criterion B flow to drop below the pre-project flow)
+if set to 1.  If SUPCRITBMETHOD is set to 2, then the Criterion B flow is 
+not allowed to be less than the pre-project flow.  The value specified was:
+
+#1179
+
+All of the supply indicators were read in on previous records.  
+
+#1180
+
+Error reading supply indicators.  The first value on a line is expected to
+contain the number of supply values on the line.
+
+#1181
+
+When routing through Lake Ontario under Plan 1958D, the outflow is constant 
+for the period, so the number of increments is not used.  
+
+#1182
+
+Could not find the Criterion K File input file specified by parameter 
+CRITERIONKFILE.  The filename used and the parameter line it 
+was read from are as follows:
+
+#1183
+
+Did not specify the year of the last sturgeon flow, as required to use Plan 
+2012.  This is required information for the plan.  Insert a line such 
+as:
+
+	Last Sturgeon Year: 2013
+
+#1184
+
+The last sturgeon flow specified occurs after the start of the simulation!
+
+#1185
+
+Previous months gate setting must be either 0.5 or an integer from 1 to 16.
+
+#9999
+
+        10        20        30        40        50        60        70        80        90
+123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
