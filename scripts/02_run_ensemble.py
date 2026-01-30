@@ -4,32 +4,31 @@ from __future__ import annotations
 import subprocess
 from pathlib import Path
 
+REPO_ROOT = Path(__file__).resolve().parents[1]
+EXE = REPO_ROOT / "bin" / "cglrrm.exe"
+EXP_DIR = REPO_ROOT / "experiments" / "ens_climo_2019"
+MEMBERS_DIR = EXP_DIR / "members"
 
 def main():
-    root = Path(__file__).resolve().parents[1]
-    exp_root = root / "experiments" / "ens_climo_2019"
-    members_root = exp_root / "members"
+    if not EXE.exists():
+        raise FileNotFoundError(f"Missing executable: {EXE}")
 
-    exe = root / "bin" / "cglrrm.exe"  # adjust to your actual executable name
-    if not exe.exists():
-        raise FileNotFoundError(f"Missing executable at {exe}. Put your model binary there.")
+    members = sorted([p for p in MEMBERS_DIR.iterdir() if p.is_dir()])
+    if not members:
+        raise RuntimeError("No members found. Run scripts/ens2019_make_inputs.py first.")
 
-    member_dirs = sorted([p for p in members_root.iterdir() if p.is_dir()])
-    if not member_dirs:
-        raise RuntimeError("No members found. Run scripts/01_make_ensemble_inputs.py first.")
+    for mdir in members:
+        params_dir = mdir / "params"
+        params_files = sorted(params_dir.glob("CGLRRM_params.Y*"))
+        if not params_files:
+            raise FileNotFoundError(f"No params found in {params_dir}")
+        params = params_files[0]
 
-    for md in member_dirs:
-        params = md / "CGLRRM_params.member"
-        if not params.exists():
-            raise FileNotFoundError(f"Missing params for member {md.name}: {params}")
-
-        print(f"Running member {md.name} ...")
-        # If your model expects: cglrrm.exe <params_file>
-        # adjust arguments accordingly (some models use cwd-relative paths)
-        subprocess.run([str(exe), str(params)], check=True, cwd=str(md))
+        print(f"Running {mdir.name} ...")
+        # Many Fortran models assume relative paths; run from member folder
+        subprocess.run([str(EXE), str(params)], check=True, cwd=str(mdir))
 
     print("All members finished.")
-
 
 if __name__ == "__main__":
     main()

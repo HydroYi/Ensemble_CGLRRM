@@ -5,199 +5,251 @@ import re
 import shutil
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, Tuple, List
 
 import numpy as np
 
+# -------------------------
+# CONFIG (edit if needed)
+# -------------------------
+REPO_ROOT = Path(__file__).resolve().parents[1]
 
-LAKES = ["sp", "mh", "er", "sc"]  # Superior, Michigan-Huron, Erie, St. Clair
+IJC_DIR = REPO_ROOT / "IJC data"                      # note the space
+NBS_DIR = IJC_DIR / "MonthlyNetBasinSupply"
+BOM_DIR = IJC_DIR / "BeginningofMonth"
+
+TEMPLATE_DIR = REPO_ROOT / "utils" / "Templates"
+PARAMS_TEMPLATE = TEMPLATE_DIR / "CGLRRM_params.template"   # <- set this to your actual template file name
+
+EXPERIMENT_DIR = REPO_ROOT / "experiments" / "ens_climo_2019"
+TARGET_YEAR = 2019
+HIST_YEAR_MIN = 1901
+HIST_YEAR_MAX = 2018
+
+# Lakes used by CGLRRM params keys in your older template (Sup/MHu/Eri/Stc).
+# Map "logical lake code" -> how it's referenced in params + which NBS file to use.
+LAKES = {
+    "sp": {"param_key": "Sup NBS Data:"},
+    "mh": {"param_key": "MHu NBS data:"},
+    "er": {"param_key": "Eri NBS data:"},
+    "sc": {"param_key": "Stc NBS data:"},
+}
+
+# How to find the historical NBS files under NBS_DIR:
+# If your files are like "MNBS_YYYY_sp.txt" etc, keep this.
+NBS_GLOB = "*{lake}*.txt"   # e.g., "*sp*.txt" within MonthlyNetBasinSupply
+
+# How to find BOM level files under BOM_DIR (used to set initial levels in params or member init file)
+BOM_GLOB = "*{lake}*.txt"   # e.g., "*sp*.txt"
+
+# Simulation window
+START_DATE = (2019, 1, 1)
+END_DATE = (2019, 12, 31)
+
+#%%
+# -------------------------
+# helpers
+# -------------------------
+YEAR_ROW = re.compile(r"^\s*(\d{4})\s+(-?\d+(\.\d+)?\s+){11}(-?\d+(\.\d+)?)\s*$")
 
 
-@dataclass
-class TemplatePaths:
-    params_template: Path
-    nbs_templates: Dict[str, Path]  # lake -> file
-
-
-def parse_mnbs_yearly_monthly(path: Path) -> Tuple[List[str], Dict[int, np.ndarray]]:
-    """
-    Parse MNBS-style file with headers and rows like:
-    YYYY  Jan Feb ... Dec  (12 values)
-    Returns (header_lines, data_dict[year] = array(12,))
-    """
-    header_lines: List[str] = []
+def parse_year12_file(path: Path) -> Tuple[List[str], Dict[int, np.ndarray]]:
+    header: List[str] = []
     data: Dict[int, np.ndarray] = {}
-
-    year_row = re.compile(r"^\s*(\d{4})\s+(-?\d+(\.\d+)?\s+){11}(-?\d+(\.\d+)?)\s*$")
-
-    with path.open("r", encoding="utf-8", errors="ignore") as f:
-        for line in f:
-            if year_row.match(line):
-                parts = line.split()
-                yr = int(parts[0])
-                vals = np.array([float(x) for x in parts[1:13]], dtype=float)
-                data[yr] = vals
-            else:
-                header_lines.append(line.rstrip("\n"))
-
+    for line in path.read_text(encoding="utf-8", errors="ignore").splitlines():
+        if YEAR_ROW.match(line):
+            parts = line.split()
+            y = int(parts[0])
+            vals = np.array([float(x) for x in parts[1:13]], dtype=float)
+            data[y] = vals
+        else:
+            header.append(line)
     if not data:
-        raise ValueError(f"No year rows parsed from {path}. Check format.")
-    return header_lines, data
+        raise ValueError(f"Could not parse any year rows from {path}")
+    return header, data
 
 
-def format_mnbs_line(year: int, vals12: np.ndarray) -> str:
-    """
-    Approximate FORTRAN I4 12F8.0 formatting (integer-ish monthly flows).
-    Adjust decimals if your file uses something else.
-    """
+def format_year12_line(year: int, vals12: np.ndarray) -> str:
+    # approximate FORTRAN I4 12F8.0
     return f"{year:4d}" + "".join([f"{v:8.0f}" for v in vals12]) + "\n"
 
 
-def write_mnbs_with_replaced_year(
-    template_path: Path,
-    out_path: Path,
-    target_year: int,
-    replacement_vals12: np.ndarray,
-) -> None:
-    header, data = parse_mnbs_yearly_monthly(template_path)
-    data[target_year] = replacement_vals12.copy()
-
-    years_sorted = sorted(data.keys())
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    with out_path.open("w", encoding="utf-8") as f:
+def write_year12_with_replaced_year(template_file: Path, out_file: Path, target_year: int, vals12: np.ndarray) -> None:
+    header, data = parse_year12_file(template_file)
+    data[target_year] = vals12.copy()
+    years = sorted(data.keys())
+    out_file.parent.mkdir(parents=True, exist_ok=True)
+    with out_file.open("w", encoding="utf-8") as f:
         for h in header:
             f.write(h + "\n")
-        for yr in years_sorted:
-            f.write(format_mnbs_line(yr, data[yr]))
+        for y in years:
+            f.write(format_year12_line(y, data[y]))
 
 
-def patch_params_file(
-    params_template: Path,
-    out_params: Path,
-    member_input_dir: Path,
+def find_single_file(folder: Path, pattern: str) -> Path:
+    hits = sorted(folder.glob(pattern))
+    if len(hits) == 0:
+        raise FileNotFoundError(f"No files match pattern '{pattern}' in {folder}")
+    if len(hits) > 1:
+        # pick the largest file (often the full record), but warn in message
+        hits = sorted(hits, key=lambda p: p.stat().st_size, reverse=True)
+    return hits[0]
+
+
+def patch_params(
+    template_path: Path,
+    out_path: Path,
+    nbs_paths: Dict[str, Path],
     member_output_dir: Path,
-    nbs_files: Dict[str, Path],
     start_date: Tuple[int, int, int],
     end_date: Tuple[int, int, int],
     out_ext: str,
+    init_levels: Dict[str, float] | None = None,
 ) -> None:
     """
-    Patch the simple key:value lines observed in your params file, e.g.
-      Sup NBS Data: ./input/MNBS_2008_sp.txt
-      Output Directory: ./output/
-      Start Date: 1982,8,1
-      End Date: 1983,7,31
-      Output Extension: .test
-
-    Those appear near top of your template. (See your uploaded CGLRRM_params.2008)
+    Patch minimal keys in params:
+      - NBS file paths (Sup/MHu/Eri/Stc)
+      - Output Directory
+      - Start/End Date
+      - Output Extension
+    Optionally patch BOM init lake levels if your template has keys like:
+      "Sup Init Level:" etc (you can add below if needed).
     """
-    text = params_template.read_text(encoding="utf-8", errors="ignore").splitlines()
+    lines = template_path.read_text(encoding="utf-8", errors="ignore").splitlines()
 
-    def set_line(prefix: str, new_value: str) -> None:
-        for i, line in enumerate(text):
+    def set_prefix(prefix: str, value: str):
+        for i, line in enumerate(lines):
             if line.strip().startswith(prefix):
-                text[i] = f"{prefix} {new_value}"
+                lines[i] = f"{prefix} {value}"
                 return
-        raise ValueError(f"Could not find line starting with '{prefix}' in {params_template}")
+        # If not found, silently skip (some templates differ)
+        return
 
-    # Match your template naming: sp/mh/er/sc
-    set_line("Sup NBS Data:", str(nbs_files["sp"]))
-    set_line("MHu NBS data:", str(nbs_files["mh"]))
-    set_line("Eri NBS data:", str(nbs_files["er"]))
-    set_line("Stc NBS data:", str(nbs_files["sc"]))
+    # NBS files
+    for lk, meta in LAKES.items():
+        set_prefix(meta["param_key"], str(nbs_paths[lk]))
 
-    set_line("Output Directory:", str(member_output_dir))
-    set_line("Start Date:", f"{start_date[0]},{start_date[1]},{start_date[2]}")
-    set_line("End Date:", f"{end_date[0]},{end_date[1]},{end_date[2]}")
-    set_line("Output Extension:", out_ext)
+    # Standard run controls (these exist in your older style params file)
+    set_prefix("Output Directory:", str(member_output_dir))
+    set_prefix("Start Date:", f"{start_date[0]},{start_date[1]},{start_date[2]}")
+    set_prefix("End Date:", f"{end_date[0]},{end_date[1]},{end_date[2]}")
+    set_prefix("Output Extension:", out_ext)
 
-    out_params.parent.mkdir(parents=True, exist_ok=True)
-    out_params.write_text("\n".join(text) + "\n", encoding="utf-8")
+    # Optional: patch init levels if your params template has matching keys
+    # Adjust these prefixes to match your real template file.
+    if init_levels:
+        set_prefix("Sup Init Level:", f"{init_levels.get('sp', '')}")
+        set_prefix("MHu Init Level:", f"{init_levels.get('mh', '')}")
+        set_prefix("Eri Init Level:", f"{init_levels.get('er', '')}")
+        set_prefix("Stc Init Level:", f"{init_levels.get('sc', '')}")
+
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def read_bom_level_for_year(bom_file: Path, year: int) -> float:
+    """
+    Expect a simple file with year rows or date rows.
+    We try two common cases:
+      1) YEAR <value>
+      2) YYYY-MM-DD <value>
+    Returns the first BOM value for Jan of the year if date-based,
+    else the year-based value.
+    """
+    txt = bom_file.read_text(encoding="utf-8", errors="ignore").splitlines()
+    # Case 1: year value
+    for line in txt:
+        parts = line.split()
+        if len(parts) >= 2 and parts[0].isdigit() and len(parts[0]) == 4:
+            if int(parts[0]) == year:
+                return float(parts[1])
+
+    # Case 2: date value (pick earliest in that year)
+    best = None
+    for line in txt:
+        parts = line.split()
+        if len(parts) >= 2 and re.match(r"^\d{4}-\d{2}-\d{2}$", parts[0]):
+            y = int(parts[0][:4])
+            if y == year:
+                best = float(parts[1])
+                break
+    if best is None:
+        raise ValueError(f"Could not find BOM init level for {year} in {bom_file}")
+    return best
 
 
 def main():
-    """
-    Build ensemble members for a 2019 12-month simulation:
-      - For each historical year y in [min_year..2018], replace year=2019 NBS with year=y NBS
-      - Write member-specific MNBS files + params
-    """
-    root = Path(__file__).resolve().parents[1]
-    exp_root = root / "experiments" / "ens_climo_2019"
-    members_root = exp_root / "members"
+    # Fresh rebuild
+    if EXPERIMENT_DIR.exists():
+        shutil.rmtree(EXPERIMENT_DIR)
+    (EXPERIMENT_DIR / "members").mkdir(parents=True, exist_ok=True)
+    (EXPERIMENT_DIR / "metrics").mkdir(parents=True, exist_ok=True)
 
-    templates = TemplatePaths(
-        params_template=root / "templates" / "CGLRRM_params.template",
-        nbs_templates={
-            "er": root / "templates" / "MNBS_template_er.txt",
-            "mh": root / "templates" / "MNBS_template_mh.txt",
-            "sc": root / "templates" / "MNBS_template_sc.txt",
-            "sp": root / "templates" / "MNBS_template_sp.txt",
-        },
-    )
+    # Discover template NBS files (full records) to use as “base”; we will overwrite the TARGET_YEAR row.
+    template_nbs: Dict[str, Path] = {}
+    bom_files: Dict[str, Path] = {}
 
-    target_year = 2019
-    last_hist_year = 2018  # "all previous years RNBS records"
-    start_date = (2019, 1, 1)
-    end_date = (2019, 12, 31)
+    for lk in LAKES.keys():
+        template_nbs[lk] = find_single_file(NBS_DIR, NBS_GLOB.format(lake=lk))
+        bom_files[lk] = find_single_file(BOM_DIR, BOM_GLOB.format(lake=lk))
 
-    # Load historical sequences per lake
-    hist_by_lake: Dict[str, Dict[int, np.ndarray]] = {}
-    for lk, fp in templates.nbs_templates.items():
-        _, data = parse_mnbs_yearly_monthly(fp)
-        hist_by_lake[lk] = data
+    # Parse NBS records once
+    nbs_data: Dict[str, Dict[int, np.ndarray]] = {}
+    for lk, fp in template_nbs.items():
+        _, data = parse_year12_file(fp)
+        nbs_data[lk] = data
 
-    # Determine common year set across lakes
-    common_years = set(hist_by_lake[LAKES[0]].keys())
-    for lk in LAKES[1:]:
-        common_years &= set(hist_by_lake[lk].keys())
+    # Determine usable years (must exist for all lakes)
+    common_years = set(range(HIST_YEAR_MIN, HIST_YEAR_MAX + 1))
+    for lk in LAKES.keys():
+        common_years &= set(nbs_data[lk].keys())
+    years = sorted(common_years)
 
-    common_years = {y for y in common_years if y <= last_hist_year}
-    if not common_years:
-        raise ValueError("No common historical years <= 2018 across all lake MNBS templates.")
+    if not years:
+        raise RuntimeError("No common historical years found across lake NBS files in MonthlyNetBasinSupply.")
 
-    years_sorted = sorted(common_years)
-    print(f"Building {len(years_sorted)} members using historical years: {years_sorted[0]}..{years_sorted[-1]}")
+    print(f"Building {len(years)} members for {TARGET_YEAR} using climatology years {years[0]}..{years[-1]}")
 
-    # Fresh build
-    if exp_root.exists():
-        shutil.rmtree(exp_root)
-    (members_root).mkdir(parents=True, exist_ok=True)
-
-    # Create each member
-    for y in years_sorted:
-        member_name = f"Y{y}"
-        member_dir = members_root / member_name
-        inp = member_dir / "input"
-        out = member_dir / "output"
+    for y in years:
+        member = f"Y{y}"
+        mdir = EXPERIMENT_DIR / "members" / member
+        inp = mdir / "input"
+        out = mdir / "output"
+        par = mdir / "params"
         inp.mkdir(parents=True, exist_ok=True)
         out.mkdir(parents=True, exist_ok=True)
+        par.mkdir(parents=True, exist_ok=True)
 
-        # Write member MNBS files where 2019 row is replaced by year y
-        out_nbs = {}
-        for lk in LAKES:
-            out_fp = inp / f"MNBS_{target_year}_as_{y}_{lk}.txt"
-            write_mnbs_with_replaced_year(
-                template_path=templates.nbs_templates[lk],
-                out_path=out_fp,
-                target_year=target_year,
-                replacement_vals12=hist_by_lake[lk][y],
+        # Member NBS: same file structure as template, but replace TARGET_YEAR row with year=y monthly sequence
+        out_nbs: Dict[str, Path] = {}
+        for lk in LAKES.keys():
+            out_fp = inp / f"MonthlyNetBasinSupply_{TARGET_YEAR}_as_{y}_{lk}.txt"
+            write_year12_with_replaced_year(
+                template_file=template_nbs[lk],
+                out_file=out_fp,
+                target_year=TARGET_YEAR,
+                vals12=nbs_data[lk][y],
             )
             out_nbs[lk] = out_fp
 
-        # Patch params
-        out_params = member_dir / "CGLRRM_params.member"
-        patch_params_file(
-            params_template=templates.params_template,
-            out_params=out_params,
-            member_input_dir=inp,
+        # BOM init levels for TARGET_YEAR (2019 Jan BOM)
+        init_levels = {lk: read_bom_level_for_year(bom_files[lk], TARGET_YEAR) for lk in LAKES.keys()}
+
+        # Params
+        out_params = par / f"CGLRRM_params.{member}"
+        patch_params(
+            template_path=PARAMS_TEMPLATE,
+            out_path=out_params,
+            nbs_paths=out_nbs,
             member_output_dir=out,
-            nbs_files=out_nbs,
-            start_date=start_date,
-            end_date=end_date,
-            out_ext=f".{member_name}",
+            start_date=START_DATE,
+            end_date=END_DATE,
+            out_ext=f".{member}",
+            init_levels=init_levels,
         )
 
-    print(f"Done. Members created under: {members_root}")
+    print("Done. Members at:", EXPERIMENT_DIR / "members")
+    print("NOTE: If PARAMS_TEMPLATE filename differs, update PARAMS_TEMPLATE at top of script.")
 
 
 if __name__ == "__main__":

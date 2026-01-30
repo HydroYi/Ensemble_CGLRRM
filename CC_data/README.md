@@ -1,9 +1,6 @@
 <<<<<<< HEAD:IJC data/README.md
-The Monthly RNBS and water level data is downloaded from the IJC website: https://www.greatlakescc.org/en/coordinating-committee-products-and-datasets/
+The Monthly RNBS and water level data is downloaded from the Coordinating Committee website: https://www.greatlakescc.org/en/coordinating-committee-products-and-datasets/
 
-=======
-Water level data is downloaded from the IJC website: https://www.greatlakescc.org/en/coordinating-committee-products-and-datasets/
->>>>>>> 33775d91199137c6b04f678ee3ecfe2b47e7670c:Lake_Level/README.md
 
 No daidy water level data publically available, we could use the station listed on the website to calculate daily and quartermonthly values
 https://lre-wm.usace.army.mil/reports/greatLakes/greatLakesLevelsThisMonth/greatLakesLevelsThisMonth.html
