@@ -9,6 +9,7 @@ The main goal is to support **ensemble and uncertainty analysis of Great Lakes w
 - Evaluating probabilistic performance using metrics such as **CRPS** and **rank histograms**
 
 The workflow is built around **historical Coordinated Committee Great Lakes datasets** and is intended for research and model evaluation purposes.
+This workflow is also intended to be extended to use the NBS ensembles from the BIL-SA model outputs.
 
 ---
 
