@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Dict, List
+import sys
 
 import numpy as np
 import pandas as pd
@@ -10,7 +11,10 @@ import matplotlib.pyplot as plt
 from properscoring import crps_ensemble
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-EXP_DIR = REPO_ROOT / "experiments" / "ens_climo_2019"
+
+# Get year from command line argument, default to 2000
+TARGET_YEAR = int(sys.argv[1]) if len(sys.argv) > 1 else 2000
+EXP_DIR = REPO_ROOT / "experiments" / f"ens_climo_{TARGET_YEAR}"
 MEMBERS_DIR = EXP_DIR / "members"
 METRICS_DIR = EXP_DIR / "metrics"
 CC_DATA_DIR = REPO_ROOT / "CC_data"
@@ -18,7 +22,7 @@ CC_DATA_DIR = REPO_ROOT / "CC_data"
 # Lakes you want to evaluate
 LAKES = ["sp", "mh", "er", "sc"]
 
-def read_obs(target_year: int = 2019) -> pd.DataFrame:
+def read_obs(target_year: int) -> pd.DataFrame:
     """
     Read observed water levels from CC_data folder.
     Expects files like Lake***_MonthlyMeanWaterLevels_1918to2026.csv
@@ -244,7 +248,7 @@ def main():
 
     # Read observed data
     try:
-        obs = read_obs()
+        obs = read_obs(TARGET_YEAR)
     except ValueError as e:
         print(f"ERROR: {e}")
         return

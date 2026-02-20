@@ -2,11 +2,15 @@
 from __future__ import annotations
 
 import subprocess
+import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 EXE = REPO_ROOT / "bin" / "cglrrm.exe"
-EXP_DIR = REPO_ROOT / "experiments" / "ens_climo_2019"
+
+# Get year from command line argument, default to 2000
+TARGET_YEAR = int(sys.argv[1]) if len(sys.argv) > 1 else 2000
+EXP_DIR = REPO_ROOT / "experiments" / f"ens_climo_{TARGET_YEAR}"
 MEMBERS_DIR = EXP_DIR / "members"
 TEMPLATE_DIR = REPO_ROOT / "utils" / "Templates"
 MESSBASE = TEMPLATE_DIR / "messbase.txt"

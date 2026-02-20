@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import re
 import shutil
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Tuple, List
@@ -21,10 +22,11 @@ BOM_DIR = CC_DIR  # BOM CSV files are directly in CC_data
 TEMPLATE_DIR = REPO_ROOT / "utils" / "Templates"
 PARAMS_TEMPLATE = TEMPLATE_DIR / "CGLRRM_params.2008"   # <- set this to your actual template file name
 
-EXPERIMENT_DIR = REPO_ROOT / "experiments" / "ens_climo_2019"
-TARGET_YEAR = 2019
+# Get year from command line argument, default to 2000
+TARGET_YEAR = int(sys.argv[1]) if len(sys.argv) > 1 else 2000
+EXPERIMENT_DIR = REPO_ROOT / "experiments" / f"ens_climo_{TARGET_YEAR}"
 HIST_YEAR_MIN = 1901
-HIST_YEAR_MAX = 2018
+HIST_YEAR_MAX = TARGET_YEAR - 1
 
 # Lakes used by CGLRRM params keys in your older template (Sup/MHu/Eri/Stc).
 # Map "logical lake code" -> how it's referenced in params + which NBS file to use.
@@ -43,8 +45,8 @@ NBS_GLOB = "Lake*_MonthlyNetBasinSupply*.csv"
 BOM_GLOB = "Lake*_BeginningOfMonthWaterLevels*.csv"
 
 # Simulation window
-START_DATE = (2019, 1, 1)
-END_DATE = (2019, 12, 31)
+START_DATE = (TARGET_YEAR, 1, 1)
+END_DATE = (TARGET_YEAR, 12, 31)
 
 #%%
 # -------------------------
@@ -307,8 +309,8 @@ def main():
             )
             out_nbs[lk] = out_fp
 
-        # BOM init levels for TARGET_YEAR (2019 Jan BOM)
-        init_levels = {lk: read_bom_level_for_year(bom_files[lk], TARGET_YEAR) for lk in LAKES.keys()}
+        # BOM init levels for member (use historical year y for consistent initial conditions)
+        init_levels = {lk: read_bom_level_for_year(bom_files[lk], y) for lk in LAKES.keys()}
 
         # Params
         out_params = par / f"CGLRRM_params.{member}"
