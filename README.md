@@ -86,10 +86,10 @@ Python scripts that implement the **ensemble workflow**.
   - Creates timeseries and rank histogram plots
 
 - `04_multi_year_analysis.py`
-  Runs complete multi-year ensemble analysis pipeline (2001-2025, excluding 2019, 2025).
+  Runs complete multi-year ensemble analysis pipeline (2001-2025).
   - Automatically invokes scripts 01, 02, and 03 for each year
   - Generates CRPS vs Water Level Anomaly comparison plots (without trend lines)
-  - **New feature**: Generates lead time performance plots (CRPS for 1-12 months ahead)
+  - Generates lead time performance plots (CRPS for 1-12 months ahead)
   - Creates combined multi-lake comparison figures
   - Outputs results CSV with annual metrics
 
@@ -151,7 +151,7 @@ The analysis scripts generate the following visualizations in `experiments/analy
   - Shows relationship between forecast skill (CRPS) and water level departure from long-term mean
   - Green dotted line at CRPS=0 indicates perfect forecast skill
 
-### Lead Time Performance Plots (New)
+### Lead Time Performance Plots
 - `lead_time_performance_sp.png`, `lead_time_performance_mh.png`, `lead_time_performance_er.png`
   - Shows mean CRPS for each lead month (1-12 months ahead)
   - Aggregated across all simulation years to show skill degradation with forecast horizon
