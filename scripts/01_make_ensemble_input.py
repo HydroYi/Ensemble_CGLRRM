@@ -14,12 +14,12 @@ import numpy as np
 # -------------------------
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
-IJC_DIR = REPO_ROOT / "IJC data"                      # note the space
-NBS_DIR = IJC_DIR / "MonthlyNetBasinSupply"
-BOM_DIR = IJC_DIR / "BeginningofMonth"
+CC_DIR = REPO_ROOT / "CC_data"                      # note the space
+NBS_DIR = CC_DIR  # NBS CSV files are directly in CC_data
+BOM_DIR = CC_DIR  # BOM CSV files are directly in CC_data
 
 TEMPLATE_DIR = REPO_ROOT / "utils" / "Templates"
-PARAMS_TEMPLATE = TEMPLATE_DIR / "CGLRRM_params.template"   # <- set this to your actual template file name
+PARAMS_TEMPLATE = TEMPLATE_DIR / "CGLRRM_params.2008"   # <- set this to your actual template file name
 
 EXPERIMENT_DIR = REPO_ROOT / "experiments" / "ens_climo_2019"
 TARGET_YEAR = 2019
@@ -29,18 +29,18 @@ HIST_YEAR_MAX = 2018
 # Lakes used by CGLRRM params keys in your older template (Sup/MHu/Eri/Stc).
 # Map "logical lake code" -> how it's referenced in params + which NBS file to use.
 LAKES = {
-    "sp": {"param_key": "Sup NBS Data:"},
-    "mh": {"param_key": "MHu NBS data:"},
-    "er": {"param_key": "Eri NBS data:"},
-    "sc": {"param_key": "Stc NBS data:"},
+    "sp": {"param_key": "Sup NBS Data:", "name": "Superior"},
+    "mh": {"param_key": "MHu NBS data:", "name": "MichiganHuron"},
+    "er": {"param_key": "Eri NBS data:", "name": "Erie"},
+    "sc": {"param_key": "Stc NBS data:", "name": "StClair"},
 }
 
 # How to find the historical NBS files under NBS_DIR:
-# If your files are like "MNBS_YYYY_sp.txt" etc, keep this.
-NBS_GLOB = "*{lake}*.txt"   # e.g., "*sp*.txt" within MonthlyNetBasinSupply
+# Files are like "LakeSuperior_MonthlyNetBasinSupply_1900to2026.csv"
+NBS_GLOB = "Lake*_MonthlyNetBasinSupply*.csv"
 
 # How to find BOM level files under BOM_DIR (used to set initial levels in params or member init file)
-BOM_GLOB = "*{lake}*.txt"   # e.g., "*sp*.txt"
+BOM_GLOB = "Lake*_BeginningOfMonthWaterLevels*.csv"
 
 # Simulation window
 START_DATE = (2019, 1, 1)
@@ -57,6 +57,18 @@ def parse_year12_file(path: Path) -> Tuple[List[str], Dict[int, np.ndarray]]:
     header: List[str] = []
     data: Dict[int, np.ndarray] = {}
     for line in path.read_text(encoding="utf-8", errors="ignore").splitlines():
+        # Try CSV format first (with commas)
+        if ',' in line:
+            parts = [p.strip() for p in line.split(',')]
+            if len(parts) >= 13 and parts[0].isdigit() and len(parts[0]) == 4:
+                try:
+                    y = int(parts[0])
+                    vals = np.array([float(x) for x in parts[1:13]], dtype=float)
+                    data[y] = vals
+                    continue
+                except (ValueError, IndexError):
+                    pass
+        # Try old fixed-width format
         if YEAR_ROW.match(line):
             parts = line.split()
             y = int(parts[0])
@@ -80,8 +92,22 @@ def write_year12_with_replaced_year(template_file: Path, out_file: Path, target_
     years = sorted(data.keys())
     out_file.parent.mkdir(parents=True, exist_ok=True)
     with out_file.open("w", encoding="utf-8") as f:
+        # Write only comment lines (starting with #), skip CSV headers like "Year, Jan, Feb..."
         for h in header:
-            f.write(h + "\n")
+            if h.strip().startswith("#") or h.strip() == "":
+                f.write(h + "\n")
+        # Add units and interval lines (must come before data, without # prefix for CGLRRM to recognize them)
+        # Check if units are already specified in any form
+        units_line = None
+        for h in header:
+            if "units" in h.lower():
+                if "m3s" in h.lower() or "m3/s" in h.lower():
+                    units_line = "Units: m3s"
+                    break
+        if not units_line:
+            units_line = "Units: m3s"
+        f.write(units_line + "\n")
+        f.write("Interval: monthly\n")
         for y in years:
             f.write(format_year12_line(y, data[y]))
 
@@ -96,6 +122,20 @@ def find_single_file(folder: Path, pattern: str) -> Path:
     return hits[0]
 
 
+def find_file_by_lake(folder: Path, pattern: str, lake_name: str) -> Path:
+    """Find a file matching pattern and containing lake name."""
+    all_hits = sorted(folder.glob(pattern))
+    if len(all_hits) == 0:
+        raise FileNotFoundError(f"No files match pattern '{pattern}' in {folder}")
+
+    # Filter to files containing the lake name (case-insensitive)
+    matching = [f for f in all_hits if lake_name.lower() in f.name.lower()]
+    if not matching:
+        raise FileNotFoundError(f"No files matching '{pattern}' and containing '{lake_name}' in {folder}")
+
+    return matching[0]
+
+
 def patch_params(
     template_path: Path,
     out_path: Path,
@@ -104,44 +144,54 @@ def patch_params(
     start_date: Tuple[int, int, int],
     end_date: Tuple[int, int, int],
     out_ext: str,
+    messbase_path: Path | None = None,
     init_levels: Dict[str, float] | None = None,
 ) -> None:
     """
-    Patch minimal keys in params:
+    Patch keys in params:
       - NBS file paths (Sup/MHu/Eri/Stc)
       - Output Directory
-      - Start/End Date
+      - Start/End Date + lake levels
       - Output Extension
-    Optionally patch BOM init lake levels if your template has keys like:
-      "Sup Init Level:" etc (you can add below if needed).
+      - Message Database path
+      - Start Levels (lake initial levels for simulation)
     """
     lines = template_path.read_text(encoding="utf-8", errors="ignore").splitlines()
 
-    def set_prefix(prefix: str, value: str):
+    def set_line_with_key(key_pattern: str, value: str):
+        """Find and replace a line that contains key_pattern (case-insensitive)"""
         for i, line in enumerate(lines):
-            if line.strip().startswith(prefix):
-                lines[i] = f"{prefix} {value}"
-                return
-        # If not found, silently skip (some templates differ)
-        return
+            if key_pattern.lower() in line.lower():
+                # Replace everything after the colon with the new value
+                if ':' in line:
+                    prefix = line[:line.index(':') + 1]
+                    lines[i] = f"{prefix} {value}"
+                else:
+                    lines[i] = f"{key_pattern}: {value}"
+                return True
+        return False
 
-    # NBS files
+    # NBS files - match the param_key from LAKES dict
     for lk, meta in LAKES.items():
-        set_prefix(meta["param_key"], str(nbs_paths[lk]))
+        set_line_with_key(meta["param_key"], str(nbs_paths[lk]))
 
-    # Standard run controls (these exist in your older style params file)
-    set_prefix("Output Directory:", str(member_output_dir))
-    set_prefix("Start Date:", f"{start_date[0]},{start_date[1]},{start_date[2]}")
-    set_prefix("End Date:", f"{end_date[0]},{end_date[1]},{end_date[2]}")
-    set_prefix("Output Extension:", out_ext)
+    # Output directory and dates
+    set_line_with_key("Output Directory", str(member_output_dir) + "/")
+    set_line_with_key("Start Date", f"{start_date[0]},{start_date[1]},{start_date[2]}")
+    set_line_with_key("End Date", f"{end_date[0]},{end_date[1]},{end_date[2]}")
+    set_line_with_key("Output Extension", out_ext)
 
-    # Optional: patch init levels if your params template has matching keys
-    # Adjust these prefixes to match your real template file.
+    # Message Database path
+    if messbase_path:
+        set_line_with_key("Message DataBase", str(messbase_path))
+
+    # Patch start levels (initial conditions for each lake)
+    # The template has keys like "Sup Start Level      : 183.55 m"
     if init_levels:
-        set_prefix("Sup Init Level:", f"{init_levels.get('sp', '')}")
-        set_prefix("MHu Init Level:", f"{init_levels.get('mh', '')}")
-        set_prefix("Eri Init Level:", f"{init_levels.get('er', '')}")
-        set_prefix("Stc Init Level:", f"{init_levels.get('sc', '')}")
+        set_line_with_key("Sup Start Level", f"{init_levels.get('sp', 0):.2f} m")
+        set_line_with_key("MHu Start Level", f"{init_levels.get('mh', 0):.2f} m")
+        set_line_with_key("Eri Start Level", f"{init_levels.get('er', 0):.2f} m")
+        set_line_with_key("St. C Start Level", f"{init_levels.get('sc', 0):.2f} m")
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -150,32 +200,56 @@ def patch_params(
 def read_bom_level_for_year(bom_file: Path, year: int) -> float:
     """
     Expect a simple file with year rows or date rows.
-    We try two common cases:
-      1) YEAR <value>
-      2) YYYY-MM-DD <value>
+    We try multiple common cases:
+      1) CSV: YYYY, <value>, <value>, ...
+      2) CSV date: YYYY-MM-DD, <value>
+      3) YEAR <value> (fixed-width)
+      4) YYYY-MM-DD <value> (fixed-width)
     Returns the first BOM value for Jan of the year if date-based,
     else the year-based value.
     """
     txt = bom_file.read_text(encoding="utf-8", errors="ignore").splitlines()
-    # Case 1: year value
+
+    # Case 1: CSV format with year
+    for line in txt:
+        if ',' in line:
+            parts = [p.strip() for p in line.split(',')]
+            if len(parts) >= 2 and parts[0].isdigit() and len(parts[0]) == 4:
+                try:
+                    if int(parts[0]) == year:
+                        return float(parts[1])
+                except (ValueError, IndexError):
+                    pass
+
+    # Case 2: Year value (fixed-width)
     for line in txt:
         parts = line.split()
         if len(parts) >= 2 and parts[0].isdigit() and len(parts[0]) == 4:
             if int(parts[0]) == year:
                 return float(parts[1])
 
-    # Case 2: date value (pick earliest in that year)
+    # Case 3: CSV date value (pick earliest in that year)
     best = None
     for line in txt:
-        parts = line.split()
-        if len(parts) >= 2 and re.match(r"^\d{4}-\d{2}-\d{2}$", parts[0]):
-            y = int(parts[0][:4])
-            if y == year:
-                best = float(parts[1])
-                break
-    if best is None:
-        raise ValueError(f"Could not find BOM init level for {year} in {bom_file}")
-    return best
+        if ',' in line:
+            parts = [p.strip() for p in line.split(',')]
+            if len(parts) >= 2 and re.match(r"^\d{4}-\d{2}-\d{2}$", parts[0]):
+                y = int(parts[0][:4])
+                if y == year:
+                    best = float(parts[1])
+                    break
+        else:
+            parts = line.split()
+            if len(parts) >= 2 and re.match(r"^\d{4}-\d{2}-\d{2}$", parts[0]):
+                y = int(parts[0][:4])
+                if y == year:
+                    best = float(parts[1])
+                    break
+
+    if best is not None:
+        return best
+
+    raise ValueError(f"Could not find BOM init level for {year} in {bom_file}")
 
 
 def main():
@@ -190,8 +264,9 @@ def main():
     bom_files: Dict[str, Path] = {}
 
     for lk in LAKES.keys():
-        template_nbs[lk] = find_single_file(NBS_DIR, NBS_GLOB.format(lake=lk))
-        bom_files[lk] = find_single_file(BOM_DIR, BOM_GLOB.format(lake=lk))
+        lake_name = LAKES[lk]["name"]
+        template_nbs[lk] = find_file_by_lake(NBS_DIR, NBS_GLOB, lake_name)
+        bom_files[lk] = find_file_by_lake(BOM_DIR, BOM_GLOB, lake_name)
 
     # Parse NBS records once
     nbs_data: Dict[str, Dict[int, np.ndarray]] = {}
@@ -237,6 +312,7 @@ def main():
 
         # Params
         out_params = par / f"CGLRRM_params.{member}"
+        messbase_path = REPO_ROOT / "utils" / "Templates" / "messbase.txt"
         patch_params(
             template_path=PARAMS_TEMPLATE,
             out_path=out_params,
@@ -245,6 +321,7 @@ def main():
             start_date=START_DATE,
             end_date=END_DATE,
             out_ext=f".{member}",
+            messbase_path=messbase_path,
             init_levels=init_levels,
         )
 
