@@ -1,9 +1,9 @@
 # Ensemble_CGLRRM
 
-This repository provides a **Python-based ensemble workflow** for running and evaluating the  
+This repository provides a **Python-based workflow for ensemble simulations** for running and evaluating the  
 **Coordinated Great Lakes Regulation and Routing Model (CGLRRM)**.
 
-The main goal is to support **ensemble and uncertainty analysis of Great Lakes water levels** by:
+The main goal is to support **ensemble simulations and analysis of Great Lakes water levels** by:
 - Constructing **climatology-based ensemble simulations** using historical Net Basin Supply (NBS)
 - Running CGLRRM in batch mode for many ensemble members
 - Evaluating probabilistic performance using metrics such as **CRPS** and **rank histograms**
