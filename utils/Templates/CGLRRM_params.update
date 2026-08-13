@@ -1,0 +1,257 @@
+Sup NBS Data: ./input/MNBS_2008_sp.txt
+MHu NBS data: ./input/MNBS_2008_mh.txt
+Eri NBS data: ./input/MNBS_2008_er.txt
+Stc NBS data: ./input/MNBS_2008_sc.txt
+Output Directory: ./output/
+Sup Start Level      : 183.55 m
+MHu Start Level      : 176.7 m
+Eri Start Level      : 174.52 m
+St. C Start Level    : 175.37 m
+Start Date: 1982,8,1
+End Date: 1983,7,31
+
+# *****************************************************************************
+# EXAMPLE.dat
+# This file contains the standard inputs for Plan 2012 regulation that should
+# be used for Lake Superior regulation purposes. 
+# This file should only be changed with great caution!
+# *****************************************************************************
+#
+# ***********************************************************************
+# Parameters that change from month to month:
+# ***********************************************************************
+#
+title3:         Ensemble (2008) run for end of March through May 2020
+modeler name:   CTW
+
+
+
+# BOM levels only needed if start date is different than the first of the month
+# Sup BOM Level      : 183.57 m 
+# MHu BOM Level      : 177.23 m
+# St. C BOM Level    : 175.86 m
+# Eri BOM Level      : 174.95 m
+
+# Previous number of gates open and the last sturgeon year are required only for
+# Plan 2012. 
+Prev Sup Gates Open: 0.5
+Last Sturgeon Year: 1959
+#
+# XXX Fix this...
+#  initial condition: flow is the average of December flow from 1900 to 1999
+#  Prev St. M. Riv. Flow will not used by all plans, but the input-checking module
+#  expects to see it and refuses to run unless some value is provided.  Need to make 
+#  the code smarter about this parameter so that it knows which plans require this
+#  parameter, and move it from this common file into the input files specific to each
+#  plan.  Until then, for Plan 2012, we just provide a value (average of December flow 
+#  from 1900 to 1999, 2063 m3s, for some reason) and move forward. The previous flow
+#  is required for Plan 77a.
+Prev St. M. Riv. Flow:  2063 m3s
+#
+#
+# ***********************************************************************
+# Parameters that change from one ensemble member to the next:
+# ***********************************************************************
+#
+
+Output Extension: .test
+#
+# NBS Sequences
+#Sup NBS Data: cms, monthly, 
+
+#
+# Ice and weed retardation
+#UssIceWeedAdj: .\input\icw_M_2008_smr.txt
+#UssIceWeedAdj: m3s, monthly, 12,0.26,0.27,0.22,0.08,0.02,0.02,0.04,0.05,0.06,0.05,0.05,0.11
+UssIceWeedAdj: m3s, monthly, 12,0.23,0.25,0.21,0.07,0.01,0.0,0.01,0.01,0.03,0.02,0.02,0.08
+
+#St. C Riv Retr Data: .\input\icw_M_2008_scr.txt
+#St. C Riv Retr. Data: m3s, monthly, 12,538.02, 453.07, 113.27, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 84.95
+St. C Riv Retr. Data: m3s, monthly, 12,481.17, 440.00, 103.33, 42.67, -40.67, -29.0, -35.17, -49.33, -54.50, -46.17, -41.17, 31.33
+
+#Det Riv Retr Data: .\input\icw_M_2008_det.txt
+#Det Riv Retr Data: m3s, monthly, 12,453.07, 339.80,  84.95, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 84.95
+Det Riv Retr Data: m3s, monthly, 12,351.0, 270.83, -22.0, -77.33, -11.17, 112.0, 236.0, 281.67, 237.83, 65.0, -89.50, 1.0
+
+#Nia Riv Retr Data: .\input\icw_M_2008_nia.txt
+#Nia Riv Retr Data: m3s, monthly, 12,226.53, 169.90, 113.27, 141.58, 0.0, 56.63, 226.53, 141.58, 84.95, 56.63, 0.0, 141.58
+Nia Riv Retr Data: m3s, monthly, 12,-67.83, 15.88, 58.38, 98.92, 42.83, 192.83, 227.17, 196.50, 150.79, 5.13, -135.25, -183.04
+
+#
+# Diversion flows
+#
+#Comb LLO Div Data: .\input\DIV_M_2008_llo.txt
+Comb LLO Div Data: m3s, monthly, 12, 131,113,95,90,193,272,204,168,153,153,153,145
+
+#Chicago Div. data: .\input\DIV_M_2008_chi.txt
+Chicago Div. data: 10m3s, constant, 9.1
+
+#Welland Canal data: .\input\DIV_M_2008_wel.txt
+Welland Canal data: m3s, monthly, 12,201,197,212,233,235,233,239,230,234,232,223,220
+
+# ***********************************************************************
+# Parameters that do not typically change on a regular basis:
+# ***********************************************************************
+#
+title1:         Plan 2012
+title2:         Ensemble
+#
+St. M. Riv. Solution: Plan 2012
+#
+#  Use first 50% value for each month from "operation supply" matrix for
+#  when checking Criterion B or C
+P77A Compat Mode:	-1
+#
+OnlyOneOpen:		false
+#  Assume file of error messages is in same directory
+Message DataBase: 	messbase.txt
+#
+Sup Output Files:       M
+Mhu Output Files:       M
+StC Output Files:       M
+Eri Output Files:       QM
+Write Erie Outflow: 	TRUE
+#
+Sup Verbosity:  	5
+Midlake Verbosity:	3
+TS Data Verbosity:	3
+General Verbosity:	2
+#
+Lakes to solve for: 	Smce
+Month Length: Actual  
+#
+#  Do not round levels or flows during the primary routing calculations
+Level Round: 		-99 
+Flow Round: 		-99 
+BOM Round: 			-99 
+#
+#
+#   Water balance inputs
+#
+# XXX Check this...
+#  These values represent average totals flows for each month of the diversions at 
+#  Ogoki and Long Lac for the year ????-????.
+### Comb LLO Div Data: m3s, monthly, 12, 113,99,85,79,181,252,207,170,133,127,122,125
+#
+#  This value represents the court-mandated average flow out of the Chicago Diversion
+### Chicago Div. data: 10m3s, constant, 9.1
+#
+# XXX Check this...
+#  This value represents monthly average Lake Erie outflows through the Welland Canal 
+#  for the years ????-????.
+#Welland Canal data: m3s, monthly, 12,220,211,222,247,244,246,248,239,244,243,243,237
+#  Reduced values by 50 cms to account for Decew plant maintenance, except Nov reduced by 150 cms and Dec reduced by 100 cms.
+#Welland Canal data: m3s, monthly, 12,170,160,170,200,190,200,200,190,190,190,90,140
+### Welland Canal data: m3s, monthly, 12,220,211,222,247,244,246,248,190,190,190,90,140
+#
+#
+#
+#  The next parameters determine how to represent physical capacities of
+#  Compensating Works and other features contributing to Lake Superior
+#  outflow.  These capacities are checked after determination of desired
+#  regulation plan flows, and override any plan flows outside the range 
+#  of physical capacity.  The choices for various values are explained in
+#  Physical Capacities And Limits Apr2009, Kropfeiter & Caldwell, 2009
+#
+#  Limit total outflow (except gates) to 2330 m3/s
+Side Channel Max: 2320,2320,2320,2320,2320,2320,2320,2320,2320,2320,2320,2320
+#  Ensure that total outflow (except gates) at least 280 in summer and 
+#  1150 in winter to 2330 m3/s
+Side Channel Min: 1150,1150,1150,1150,280,280,280,280,280,280,280,1150
+#
+#  Override plan releases that encroach into freeboard below the overtopping 
+#  elevation.  The value of 184.0 corresponds to the top of the gates.  A SW 
+#  Pier water level is compared to the overtop elevation to determine whether
+#  safe freeboard exists.
+Comp Works Overtop: 184.00 m
+#  Safe freeboard is assumed to be 10 cm, based on observations in Dec2007.
+Comp Works Freebrd: 0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1
+#
+Sup Timestep: 	Monthly
+Sup inc: 		hourly
+#  Use EC2008 formula for deriving SW Pier levels from Superior levels 
+#  described in New2008SWPRelation.pdf
+Sup. S.W. Pier Formula:	3
+#
+#
+#
+#  The three parameters "Sup. Criteria Round", "Sup. Pre-Proj. Method",
+#  and "Sup. Crit. B Method" determines how to perform calculations for 
+#  Criterion B and Criterion C.  As of May2009, they are only used by 
+#  plans that call SupCriterions().  However, even if not presently used 
+#  by a plan, we can define values here as a reminder that at some point 
+#  all plans will likely be required to optionally respect the Criteria.  
+#  At that point we should consider taking the three parameters out of 
+#  this file of common definitions and handling them individually for 
+#  each plan, so that they are not locked into the standard setting for 
+#  Plan 1977A.  Or, maybe we will insist they all handle the Criteria in
+#  the same way and leave the parameters in this file.
+#
+#  Round intermediate calculations for Criterion B and Criterion C same 
+#  same as Plan 1977A, i.e., flows to nearest m3/s, BoM levels to cm, 
+#  and other levels to 1/100 of cm
+Sup. Criteria Round: 	1
+#
+#  Compute pre-project flow the old way (get pre-project flow by popping 
+#  the Plan forecasted level into the 1887 equation, as opposed to 
+#  assuming a supply and routing through the interval). 
+#  Sup. Pre-Proj. Method: 	2
+Sup. Pre-Proj. Method: 	1
+#
+#  Do not allow the Criterion B flow to fall below the pre-project flow.
+#  This departs in rare occasions from the old models, but is safer logic.
+Sup. Crit. B Method: 	2
+U.S. Slip Equation: 2
+#
+# 
+#
+#  GLERL provides an academic treatment of routing through the middle lakes
+#  in its report documenting the MIDLAKES model:
+#  ftp://ftp.glerl.noaa.gov/publications/tech_reports/glerl-109/tm-109.pdf
+#
+#  Computing the level and outflow for each of the three middle lakes requires
+#  solving three simultaneous equations:
+#      change in storage = sum of inflows - sum of outflows
+#      river channel outflow = f(mean lake level) 
+#      mean lake level = (beginning level plus ending level)/2
+#
+#  Since the middle lakes are hydraulically inter-dependent, this amounts to
+#  solving nine equations for nine unknowns.  Since the change in storage is 
+#  non-linear, the equaton must be solved for small sub-dividisions (increments)
+#  of the routing intervals (i.e., month). 
+# 
+#############################################################
+#  From July 23 David's email
+#  Do a simulation with plan 1977A  with the new NBS (limited to 1900-2006 since the old NBS data only go to 2006), the new ice-weed and the new equations for the connecting channels.
+#  QSCR=186.90((MH+SC)/2-167)^1.510 (MH-SC)^0.360 - ice & weed retardation
+#  QDR = 9.7942 * (SC - 163)^2.5702  * (SC-E)^0.3395 - ice & weed retardation
+ 
+#  flow = 186.90((MH+SC)/2-167)^1.510 (MH-SC)^0.360 - ice & weed retardation
+St. C. Riv Eqn:  186.90, 167,  1.51, 0.36, 0.50, 0.0
+#
+#  Use the Detroit River equation proposed in June 2010 (Noorbakhsh/Fay)
+#  flow = 9.7942 * (SC - 163)^2.5702  * (SC-ER)^0.3395  - retardation
+Det Riv Eqn:   9.7942, 163, 2.5702, 0.3395, 1.00, 0.0
+#########################################################
+#  Use Niagara River equation from Quinn and Noorbakhsh, "NIAGARA 
+#  RIVER RATING EQUATION FOR THE POST-1973 DIRECTIVE PERIOD", June 2001
+#  flow = 558.3 * (ER - 169.86)**1.60 - retardation
+#  Nia Riv Eqn:  558.3 ,   169.86, 1.60, 0.00, 1.00, 0 
+#  flow = 699.4 * (ER - 170.043)**1.5 - retardation
+Nia Riv Eqn:  699.4 ,   170.043, 1.50, 0.00, 1.00, 0 
+#
+#
+# Route the middle lakes quarter-monthly in case occasion arises to assess Lake
+# Superior plan effects on Lake Ontario-St. Lawrence River.  
+Routing Title: Daily Routing thru Middle Lakes
+#  
+Midlake Timestep: QMonthly
+MIDLAKE inc: 		hourly 
+Midlake Solution: 	Iterative
+#
+#  Areas assumed constant.  Values from "Black Book" (Coordinated Great 
+#  Lakes Physical Data - May 1977)
+Sup Area/Elev :         82100 km2 
+MHu  Area/Elev: 	117400 km2 
+St. C  Area/Elev:	1114 km2
+Eri   Area/Elev:	25700 km2	
